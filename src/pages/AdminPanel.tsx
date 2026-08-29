@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Building2, CalendarCheck, Settings, Plus, Pencil, Trash2, X,
-  CheckCircle2, Clock, XCircle, LogOut, Save, Upload, Star,
+  Building2, CalendarCheck, Settings, Plus, Pencil, Trash2,
+  CheckCircle2, Clock, XCircle, LogOut, Save, Star,
 } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlassButton } from '@/components/ui/GlassButton';
@@ -73,13 +73,15 @@ export function AdminPanel({ onLogout }: AdminPanelProps) {
   ];
 
   return (
-    <div className="min-h-screen px-4 pb-32 pt-8">
-      <div className="mx-auto max-w-6xl">
+    <div className="relative min-h-screen overflow-hidden bg-black px-4 pb-32 pt-8">
+      <div className="water-droplets" />
+
+      <div className="relative z-10 mx-auto max-w-6xl">
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="font-display text-3xl font-bold text-sand">Admin Panel</h1>
-            <p className="mt-1 text-sm text-sand/50">Manage your Makazi Hub listings</p>
+            <h1 className="font-display text-3xl font-bold text-white">Admin Panel</h1>
+            <p className="mt-1 text-sm text-white/50">Manage your Makazi Hub listings</p>
           </div>
           <GlassButton variant="secondary" onClick={onLogout} size="sm">
             <span className="flex items-center gap-2"><LogOut size={16} /> Logout</span>
@@ -87,7 +89,7 @@ export function AdminPanel({ onLogout }: AdminPanelProps) {
         </div>
 
         {/* Tabs */}
-        <div className="mb-6 flex gap-2">
+        <div className="liquid-black mb-6 flex w-fit gap-1 rounded-2xl p-1.5">
           {tabs.map((t) => {
             const Icon = t.icon;
             const active = tab === t.id;
@@ -95,14 +97,14 @@ export function AdminPanel({ onLogout }: AdminPanelProps) {
               <button
                 key={t.id}
                 onClick={() => setTab(t.id)}
-                className={`glass flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all ${
-                  active ? 'text-sand ring-1 ring-sand/30 glass-glow' : 'text-sand/50 hover:text-sand/70'
+                className={`sheen-sweep flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all ${
+                  active ? 'bg-maroon-500/70 text-white' : 'text-white/50 hover:text-white/80'
                 }`}
               >
                 <Icon size={16} />
                 {t.label}
                 {t.id === 'bookings' && bookings.filter(b => b.status === 'pending').length > 0 && (
-                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-sand/20 px-1.5 text-[10px] font-bold text-sand">
+                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-white/20 px-1.5 text-[10px] font-bold text-white">
                     {bookings.filter(b => b.status === 'pending').length}
                   </span>
                 )}
@@ -113,7 +115,7 @@ export function AdminPanel({ onLogout }: AdminPanelProps) {
 
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-sand/30 border-t-sand" />
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/30 border-t-white" />
           </div>
         ) : (
           <AnimatePresence mode="wait">
@@ -168,8 +170,8 @@ function PropertiesTab({ properties, onAdd, onEdit, onDelete }: {
 }) {
   return (
     <div>
-      <div className="mb-4 flex justify-between items-center">
-        <p className="text-sm text-sand/60">{properties.length} properties listed</p>
+      <div className="mb-4 flex items-center justify-between">
+        <p className="text-sm text-white/60">{properties.length} properties listed</p>
         <GlassButton onClick={onAdd} size="sm">
           <span className="flex items-center gap-2"><Plus size={16} /> Add Property</span>
         </GlassButton>
@@ -184,23 +186,29 @@ function PropertiesTab({ properties, onAdd, onEdit, onDelete }: {
                 alt={p.name}
                 className="h-full w-full object-cover"
               />
-              <div className="absolute top-2 right-2">
+              <div className="absolute right-2 top-2">
                 {p.available ? (
                   <span className="glass rounded-full px-2 py-1 text-[10px] font-medium text-green-300 ring-1 ring-green-400/30">Available</span>
                 ) : (
-                  <span className="glass-dark rounded-full px-2 py-1 text-[10px] font-medium text-sand/50">Not Available</span>
+                  <span className="glass-dark rounded-full px-2 py-1 text-[10px] font-medium text-white/50">Not Available</span>
                 )}
               </div>
             </div>
             <div className="p-4">
-              <h3 className="font-display text-sm font-semibold text-sand">{p.name}</h3>
-              <p className="mt-0.5 text-xs text-sand/50">{p.area} • {p.property_type}</p>
-              <p className="mt-1 text-sm font-bold text-sand">{p.price.toLocaleString()} TZS/mo</p>
+              <h3 className="font-display text-sm font-semibold text-white">{p.name}</h3>
+              <p className="mt-0.5 text-xs text-white/50">{p.area} • {p.property_type}</p>
+              <p className="mt-1 text-sm font-bold text-white">{p.price.toLocaleString()} TZS/mo</p>
               <div className="mt-3 flex gap-2">
-                <button onClick={() => onEdit(p)} className="glass-button flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-xs text-sand">
+                <button
+                  onClick={() => onEdit(p)}
+                  className="sheen-sweep glass-button-accent-soft flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-xs text-white"
+                >
                   <Pencil size={14} /> Edit
                 </button>
-                <button onClick={() => onDelete(p.id)} className="glass-dark flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs text-red-300 transition-all hover:bg-red-500/20">
+                <button
+                  onClick={() => onDelete(p.id)}
+                  className="glass-dark flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs text-red-300 transition-all hover:bg-red-500/20"
+                >
                   <Trash2 size={14} />
                 </button>
               </div>
@@ -228,8 +236,8 @@ function BookingsTab({ bookings, onStatus, onDelete }: {
   if (bookings.length === 0) {
     return (
       <GlassCard className="p-12 text-center">
-        <CalendarCheck size={48} className="mx-auto text-sand/30" />
-        <p className="mt-4 text-sand/50">No booking requests yet</p>
+        <CalendarCheck size={48} className="mx-auto text-white/30" />
+        <p className="mt-4 text-white/50">No booking requests yet</p>
       </GlassCard>
     );
   }
@@ -244,25 +252,25 @@ function BookingsTab({ bookings, onStatus, onDelete }: {
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="font-display text-sm font-semibold text-sand">{b.guest_name}</h3>
+                  <h3 className="font-display text-sm font-semibold text-white">{b.guest_name}</h3>
                   <span className={`glass flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${cfg.color} ring-1 ${cfg.bg}`}>
                     <StatusIcon size={10} /> {b.status}
                   </span>
                 </div>
-                <p className="mt-1 text-xs text-sand/50">
+                <p className="mt-1 text-xs text-white/50">
                   {b.properties?.name || 'Property removed'} • {b.guest_phone}
                 </p>
                 {(b.check_in || b.check_out) && (
-                  <p className="mt-0.5 text-xs text-sand/40">
+                  <p className="mt-0.5 text-xs text-white/40">
                     {b.check_in || '?'} → {b.check_out || '?'}
                   </p>
                 )}
-                {b.message && <p className="mt-1 text-xs text-sand/40">"{b.message}"</p>}
+                {b.message && <p className="mt-1 text-xs text-white/40">"{b.message}"</p>}
               </div>
               <div className="flex gap-2">
                 {b.status === 'pending' && (
                   <>
-                    <button onClick={() => onStatus(b.id, 'approved')} className="glass-button flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs text-green-300">
+                    <button onClick={() => onStatus(b.id, 'approved')} className="sheen-sweep glass-button-accent-soft flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs text-white">
                       <CheckCircle2 size={14} /> Approve
                     </button>
                     <button onClick={() => onStatus(b.id, 'rejected')} className="glass-dark flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs text-red-300">
@@ -328,65 +336,65 @@ function SettingsTab({ settings, onSave }: { settings: SiteSettings | null; onSa
   };
 
   return (
-    <div className="space-y-4 max-w-2xl">
+    <div className="max-w-2xl space-y-4">
       <GlassCard className="p-5">
-        <h3 className="mb-4 font-display text-lg font-semibold text-sand">Site Content</h3>
+        <h3 className="mb-4 font-display text-lg font-semibold text-white">Site Content</h3>
         <div className="space-y-4">
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-sand/60">Logo Image URL</label>
+            <label className="mb-1.5 block text-xs font-medium text-white/60">Logo Image URL</label>
             <input
               type="text"
               value={logoUrl}
               onChange={(e) => setLogoUrl(e.target.value)}
               placeholder="https://..."
-              className="glass w-full rounded-xl px-4 py-2.5 text-sm text-sand placeholder:text-sand/40 focus:outline-none focus:ring-1 focus:ring-sand/30"
+              className="glass w-full rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-1 focus:ring-maroon-500/50"
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-sand/60">Background Image URL</label>
+            <label className="mb-1.5 block text-xs font-medium text-white/60">Background Image URL</label>
             <input
               type="text"
               value={backgroundUrl}
               onChange={(e) => setBackgroundUrl(e.target.value)}
               placeholder="https://..."
-              className="glass w-full rounded-xl px-4 py-2.5 text-sm text-sand placeholder:text-sand/40 focus:outline-none focus:ring-1 focus:ring-sand/30"
+              className="glass w-full rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-1 focus:ring-maroon-500/50"
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-sand/60">Hero Tagline</label>
+            <label className="mb-1.5 block text-xs font-medium text-white/60">Hero Tagline</label>
             <textarea
               value={heroTagline}
               onChange={(e) => setHeroTagline(e.target.value)}
               rows={2}
-              className="glass w-full resize-none rounded-xl px-4 py-2.5 text-sm text-sand placeholder:text-sand/40 focus:outline-none focus:ring-1 focus:ring-sand/30"
+              className="glass w-full resize-none rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-1 focus:ring-maroon-500/50"
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-sand/60">About Us Text</label>
+            <label className="mb-1.5 block text-xs font-medium text-white/60">About Us Text</label>
             <textarea
               value={aboutText}
               onChange={(e) => setAboutText(e.target.value)}
               rows={5}
-              className="glass w-full resize-none rounded-xl px-4 py-2.5 text-sm text-sand placeholder:text-sand/40 focus:outline-none focus:ring-1 focus:ring-sand/30"
+              className="glass w-full resize-none rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-1 focus:ring-maroon-500/50"
             />
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-sand/60">Contact Phone</label>
+              <label className="mb-1.5 block text-xs font-medium text-white/60">Contact Phone</label>
               <input
                 type="text"
                 value={contactPhone}
                 onChange={(e) => setContactPhone(e.target.value)}
-                className="glass w-full rounded-xl px-4 py-2.5 text-sm text-sand focus:outline-none focus:ring-1 focus:ring-sand/30"
+                className="glass w-full rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-maroon-500/50"
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-sand/60">WhatsApp Link</label>
+              <label className="mb-1.5 block text-xs font-medium text-white/60">WhatsApp Link</label>
               <input
                 type="text"
                 value={contactWhatsapp}
                 onChange={(e) => setContactWhatsapp(e.target.value)}
-                className="glass w-full rounded-xl px-4 py-2.5 text-sm text-sand focus:outline-none focus:ring-1 focus:ring-sand/30"
+                className="glass w-full rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-maroon-500/50"
               />
             </div>
           </div>
@@ -478,82 +486,82 @@ function PropertyFormModal({ open, property, onClose, onSaved }: {
   return (
     <GlassModal open={open} onClose={onClose} className="max-w-2xl">
       <div className="p-6 sm:p-8">
-        <h2 className="mb-5 font-display text-xl font-bold text-sand">
+        <h2 className="mb-5 font-display text-xl font-bold text-white">
           {property ? 'Edit Property' : 'Add New Property'}
         </h2>
 
         <div className="space-y-3">
           <div>
-            <label className="mb-1 block text-xs font-medium text-sand/60">Property Name *</label>
+            <label className="mb-1 block text-xs font-medium text-white/60">Property Name *</label>
             <input type="text" value={name} onChange={(e) => setName(e.target.value)}
-              className="glass w-full rounded-xl px-4 py-2.5 text-sm text-sand placeholder:text-sand/40 focus:outline-none focus:ring-1 focus:ring-sand/30" />
+              className="glass w-full rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-1 focus:ring-maroon-500/50" />
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-sand/60">Description</label>
+            <label className="mb-1 block text-xs font-medium text-white/60">Description</label>
             <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3}
-              className="glass w-full resize-none rounded-xl px-4 py-2.5 text-sm text-sand placeholder:text-sand/40 focus:outline-none focus:ring-1 focus:ring-sand/30" />
+              className="glass w-full resize-none rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-1 focus:ring-maroon-500/50" />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1 block text-xs font-medium text-sand/60">Price (TZS/mo) *</label>
+              <label className="mb-1 block text-xs font-medium text-white/60">Price (TZS/mo) *</label>
               <input type="number" value={price} onChange={(e) => setPrice(e.target.value)}
-                className="glass w-full rounded-xl px-4 py-2.5 text-sm text-sand placeholder:text-sand/40 focus:outline-none focus:ring-1 focus:ring-sand/30" />
+                className="glass w-full rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-1 focus:ring-maroon-500/50" />
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-sand/60">Area</label>
+              <label className="mb-1 block text-xs font-medium text-white/60">Area</label>
               <select value={area} onChange={(e) => setArea(e.target.value)}
-                className="glass w-full rounded-xl px-4 py-2.5 text-sm text-sand focus:outline-none">
-                {[...AREAS].map(a => <option key={a} value={a} className="bg-cyprus-600">{a}</option>)}
+                className="glass w-full rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none">
+                {[...AREAS].map(a => <option key={a} value={a} className="bg-black">{a}</option>)}
               </select>
             </div>
           </div>
 
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="mb-1 block text-xs font-medium text-sand/60">Type</label>
+              <label className="mb-1 block text-xs font-medium text-white/60">Type</label>
               <select value={propertyType} onChange={(e) => setPropertyType(e.target.value)}
-                className="glass w-full rounded-xl px-4 py-2.5 text-sm text-sand focus:outline-none">
-                {[...PROPERTY_TYPES].map(t => <option key={t} value={t} className="bg-cyprus-600">{t}</option>)}
+                className="glass w-full rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none">
+                {[...PROPERTY_TYPES].map(t => <option key={t} value={t} className="bg-black">{t}</option>)}
               </select>
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-sand/60">Bedrooms</label>
+              <label className="mb-1 block text-xs font-medium text-white/60">Bedrooms</label>
               <input type="number" value={bedrooms} onChange={(e) => setBedrooms(e.target.value)}
-                className="glass w-full rounded-xl px-4 py-2.5 text-sm text-sand focus:outline-none focus:ring-1 focus:ring-sand/30" />
+                className="glass w-full rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-maroon-500/50" />
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-sand/60">Bathrooms</label>
+              <label className="mb-1 block text-xs font-medium text-white/60">Bathrooms</label>
               <input type="number" value={bathrooms} onChange={(e) => setBathrooms(e.target.value)}
-                className="glass w-full rounded-xl px-4 py-2.5 text-sm text-sand focus:outline-none focus:ring-1 focus:ring-sand/30" />
+                className="glass w-full rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-maroon-500/50" />
             </div>
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-sand/60">Location (specific address)</label>
+            <label className="mb-1 block text-xs font-medium text-white/60">Location (specific address)</label>
             <input type="text" value={location} onChange={(e) => setLocation(e.target.value)}
-              className="glass w-full rounded-xl px-4 py-2.5 text-sm text-sand placeholder:text-sand/40 focus:outline-none focus:ring-1 focus:ring-sand/30" />
+              className="glass w-full rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-1 focus:ring-maroon-500/50" />
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-sand/60">Amenities (comma-separated)</label>
+            <label className="mb-1 block text-xs font-medium text-white/60">Amenities (comma-separated)</label>
             <input type="text" value={amenities} onChange={(e) => setAmenities(e.target.value)}
               placeholder="WiFi, Parking, Security, Air Conditioning"
-              className="glass w-full rounded-xl px-4 py-2.5 text-sm text-sand placeholder:text-sand/40 focus:outline-none focus:ring-1 focus:ring-sand/30" />
+              className="glass w-full rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-1 focus:ring-maroon-500/50" />
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-sand/60">Image URLs (comma-separated)</label>
+            <label className="mb-1 block text-xs font-medium text-white/60">Image URLs (comma-separated)</label>
             <input type="text" value={imageUrls} onChange={(e) => setImageUrls(e.target.value)}
               placeholder="https://images.pexels.com/..., https://..."
-              className="glass w-full rounded-xl px-4 py-2.5 text-sm text-sand placeholder:text-sand/40 focus:outline-none focus:ring-1 focus:ring-sand/30" />
+              className="glass w-full rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-1 focus:ring-maroon-500/50" />
           </div>
 
           <div>
-            <label className="mb-1.5 flex cursor-pointer items-center gap-2 text-sm text-sand/80">
+            <label className="mb-1.5 flex cursor-pointer items-center gap-2 text-sm text-white/80">
               <input type="checkbox" checked={available} onChange={(e) => setAvailable(e.target.checked)}
-                className="h-4 w-4 rounded accent-sand" />
+                className="h-4 w-4 rounded accent-[#94000b]" />
               Available for rent
             </label>
           </div>

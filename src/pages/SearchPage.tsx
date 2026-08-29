@@ -251,7 +251,20 @@ function PropertyCard({ property, index, onClick }: { property: Property; index:
 
         {/* View details button */}
         <div className="px-2.5 pb-2.5">
-          <button className="glass-button-accent w-full rounded-xl py-2 text-[10px] font-medium text-sand transition-all hover:text-white sm:text-xs">
+          <button
+            className="glass-button-accent w-full rounded-xl py-2 text-[10px] font-medium text-white transition-all duration-200 ease-out sm:text-xs"
+            style={{ transformStyle: 'preserve-3d' }}
+            onMouseMove={(e) => {
+              const target = e.currentTarget;
+              const rect = target.getBoundingClientRect();
+              const x = e.clientX - rect.left - rect.width / 2;
+              const y = e.clientY - rect.top - rect.height / 2;
+              const rotateY = (x / rect.width) * 8;
+              const rotateX = -(y / rect.height) * 8;
+              target.style.transform = `perspective(700px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(4px)`;
+            }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = ''; }}
+          >
             View Details
           </button>
         </div>

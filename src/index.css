@@ -10,7 +10,7 @@
   }
   body {
     @apply font-sans antialiased;
-    background-color: #004741;
+    background-color: #000000;
     color: #F0EAD6;
     overflow-x: hidden;
   }
@@ -22,50 +22,52 @@
 
 @layer components {
   .glass {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(16px) saturate(140%);
-    -webkit-backdrop-filter: blur(16px) saturate(140%);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    position: relative;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(14px) saturate(150%);
+    -webkit-backdrop-filter: blur(14px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow:
-      0 8px 32px rgba(0, 0, 0, 0.25),
-      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      0 6px 20px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18);
   }
 
   .glass-dark {
-    background: rgba(0, 70, 67, 0.35);
-    backdrop-filter: blur(20px) saturate(140%);
-    -webkit-backdrop-filter: blur(20px) saturate(140%);
-    border: 1px solid rgba(240, 234, 214, 0.12);
+    position: relative;
+    background: rgba(0, 20, 18, 0.62);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    border: 1px solid rgba(240, 234, 214, 0.14);
     box-shadow:
-      0 8px 32px rgba(0, 0, 0, 0.3),
-      inset 0 1px 0 rgba(240, 234, 214, 0.08);
+      0 6px 20px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(240, 234, 214, 0.1);
   }
 
   .glass-glow {
     box-shadow:
       0 0 0 1px rgba(240, 234, 214, 0.15),
-      0 8px 32px rgba(0, 0, 0, 0.25),
-      0 0 24px rgba(240, 234, 214, 0.06),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      0 6px 20px rgba(0, 0, 0, 0.35),
+      0 0 20px rgba(240, 234, 214, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
   }
 
   .glass-button {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(12px) saturate(140%);
-    -webkit-backdrop-filter: blur(12px) saturate(140%);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    background: rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(12px) saturate(150%);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.22);
     box-shadow:
-      0 4px 16px rgba(0, 0, 0, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      0 4px 12px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: all 0.2s ease-out;
   }
 
   .glass-button:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.22);
     box-shadow:
-      0 6px 24px rgba(0, 0, 0, 0.25),
-      0 0 20px rgba(240, 234, 214, 0.12),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      0 4px 16px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
   }
 
   .glass-button:active {
@@ -73,25 +75,24 @@
   }
 
   /* Accent (maroon) variant — used for primary CTAs and active/highlight states.
-     Text stays sand/cream for readability; only the glass tint + glow uses maroon. */
+     Solid, concentrated maroon fill (not washed-out translucency), white text on top. */
   .glass-button-accent {
-    background: rgba(120, 1, 22, 0.35);
-    backdrop-filter: blur(12px) saturate(140%);
-    -webkit-backdrop-filter: blur(12px) saturate(140%);
-    border: 1px solid rgba(120, 1, 22, 0.5);
+    position: relative;
+    background: rgba(120, 1, 22, 0.78);
+    backdrop-filter: blur(10px) saturate(150%);
+    -webkit-backdrop-filter: blur(10px) saturate(150%);
+    border: 1px solid rgba(210, 70, 90, 0.55);
     box-shadow:
-      0 4px 20px rgba(120, 1, 22, 0.25),
-      0 0 20px rgba(120, 1, 22, 0.15),
-      inset 0 1px 0 rgba(255, 255, 255, 0.12);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      0 4px 16px rgba(120, 1, 22, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    transition: all 0.2s ease-out;
   }
 
   .glass-button-accent:hover {
-    background: rgba(120, 1, 22, 0.5);
+    background: rgba(140, 5, 28, 0.9);
     box-shadow:
-      0 6px 28px rgba(120, 1, 22, 0.35),
-      0 0 28px rgba(120, 1, 22, 0.25),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      0 6px 22px rgba(120, 1, 22, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.22);
   }
 
   .glass-button-accent:active {
@@ -100,10 +101,110 @@
 
   .accent-glow {
     box-shadow:
-      0 0 0 1px rgba(120, 1, 22, 0.4),
-      0 8px 32px rgba(0, 0, 0, 0.25),
-      0 0 24px rgba(120, 1, 22, 0.25),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      0 0 0 1px rgba(120, 1, 22, 0.45),
+      0 6px 20px rgba(0, 0, 0, 0.35),
+      0 0 18px rgba(120, 1, 22, 0.22),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  }
+
+  /* Softer maroon glass — used for secondary action buttons (Call, WhatsApp, etc.) */
+  .glass-button-accent-soft {
+    position: relative;
+    background: rgba(120, 1, 22, 0.45);
+    backdrop-filter: blur(10px) saturate(150%);
+    -webkit-backdrop-filter: blur(10px) saturate(150%);
+    border: 1px solid rgba(200, 60, 80, 0.3);
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    transition: all 0.2s ease-out;
+  }
+  .glass-button-accent-soft:hover {
+    background: rgba(140, 5, 28, 0.58);
+    box-shadow:
+      0 4px 16px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  }
+  .glass-button-accent-soft:active {
+    transform: scale(0.97);
+  }
+
+  /* Solid black liquid glass — deep, near-opaque black with a strong glossy
+     sheen and blur, for standalone hero CTAs that need maximum contrast. */
+  .glass-button-black {
+    position: relative;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow:
+      0 8px 28px rgba(0, 0, 0, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+    transition: all 0.2s ease-out;
+  }
+  .glass-button-black::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, rgba(255, 255, 255, 0.14) 0%, transparent 45%);
+    pointer-events: none;
+  }
+  .glass-button-black:hover {
+    background: rgba(10, 10, 10, 0.9);
+    box-shadow:
+      0 10px 34px rgba(0, 0, 0, 0.65),
+      0 0 20px rgba(120, 1, 22, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    border-color: rgba(200, 60, 80, 0.35);
+  }
+  .glass-button-black:active {
+    transform: scale(0.97);
+  }
+
+  /* Rich black liquid glass for compact pill rows (feature strip, contact strip) —
+     deep blur + a bright specular highlight blob, closer to Apple's "Liquid Glass". */
+  .liquid-black {
+    position: relative;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(26px) saturate(180%);
+    -webkit-backdrop-filter: blur(26px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow:
+      0 10px 30px rgba(0, 0, 0, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.22),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.45);
+  }
+  .liquid-black::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 22% 12%, rgba(255, 255, 255, 0.22), transparent 42%);
+    pointer-events: none;
+  }
+
+  /* Hover-triggered light sweep — a soft diagonal reflection glides left-to-right
+     across the element on hover, like light catching a curved glass surface. */
+  .sheen-sweep {
+    position: relative;
+    overflow: hidden;
+  }
+  .sheen-sweep::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(115deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+  }
+  .sheen-sweep:hover::after {
+    left: 130%;
   }
 
   .shimmer-border {
@@ -124,11 +225,94 @@
     animation: shimmer 2.5s linear infinite;
     pointer-events: none;
   }
+  /* Teal liquid glass — brand-color bars for the About Us accordion */
+  .glass-teal {
+    position: relative;
+    background: rgba(0, 79, 75, 0.72);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow:
+      0 6px 20px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  }
+  .glass-teal::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.16), transparent 40%);
+    pointer-events: none;
+  }
+
+  /* Rotating "liquid beam" border — a thin glowing line continuously travels
+     around the element's edge. Used to frame an open accordion panel. */
+  @property --beam-angle {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+  }
+  .border-beam {
+    position: relative;
+    border-radius: inherit;
+  }
+  .border-beam::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: conic-gradient(
+      from var(--beam-angle),
+      transparent 0deg,
+      transparent 265deg,
+      #94000b 300deg,
+      #ffb199 330deg,
+      #94000b 355deg,
+      transparent 360deg
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: beam-spin 2.6s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes beam-spin {
+    to {
+      --beam-angle: 360deg;
+    }
+  }
+
+  /* Water-droplet texture — scattered soft highlights near the corners,
+     like condensation beading on cold glass. Used behind the Admin area. */
+  .water-droplets {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.7;
+    background-image:
+      radial-gradient(circle 4px at 6% 8%, rgba(255,255,255,0.55), rgba(255,255,255,0) 70%),
+      radial-gradient(circle 7px at 3% 15%, rgba(255,255,255,0.28), rgba(255,255,255,0) 70%),
+      radial-gradient(circle 2px at 11% 6%, rgba(255,255,255,0.45), rgba(255,255,255,0) 70%),
+      radial-gradient(circle 3px at 9% 22%, rgba(255,255,255,0.35), rgba(255,255,255,0) 70%),
+      radial-gradient(circle 5px at 94% 9%, rgba(255,255,255,0.42), rgba(255,255,255,0) 70%),
+      radial-gradient(circle 2px at 90% 17%, rgba(255,255,255,0.35), rgba(255,255,255,0) 70%),
+      radial-gradient(circle 8px at 97% 5%, rgba(255,255,255,0.22), rgba(255,255,255,0) 70%),
+      radial-gradient(circle 3px at 92% 24%, rgba(255,255,255,0.3), rgba(255,255,255,0) 70%),
+      radial-gradient(circle 4px at 7% 90%, rgba(255,255,255,0.38), rgba(255,255,255,0) 70%),
+      radial-gradient(circle 6px at 3% 82%, rgba(255,255,255,0.24), rgba(255,255,255,0) 70%),
+      radial-gradient(circle 2px at 12% 94%, rgba(255,255,255,0.4), rgba(255,255,255,0) 70%),
+      radial-gradient(circle 5px at 92% 91%, rgba(255,255,255,0.32), rgba(255,255,255,0) 70%),
+      radial-gradient(circle 8px at 96% 96%, rgba(255,255,255,0.2), rgba(255,255,255,0) 70%),
+      radial-gradient(circle 2px at 88% 85%, rgba(255,255,255,0.36), rgba(255,255,255,0) 70%);
+    filter: blur(0.3px);
+  }
 }
 
 @layer utilities {
   .text-glow {
-    text-shadow: 0 0 20px rgba(240, 234, 214, 0.3), 0 2px 8px rgba(0, 0, 0, 0.4);
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
   }
   .scrollbar-hide::-webkit-scrollbar {
     display: none;

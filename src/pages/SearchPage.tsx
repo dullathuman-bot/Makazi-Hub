@@ -1,9 +1,9 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Search, MapPin, Bed, Bath, CheckCircle2, XCircle, SlidersHorizontal } from 'lucide-react';
-import { GlassCard } from '@/components/ui/GlassCard';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { PropertyDetailModal } from '@/components/PropertyDetailModal';
+import { useTilt } from '@/lib/useTilt';
 import type { Property } from '@/lib/types';
 import { AREAS, PROPERTY_TYPES } from '@/lib/types';
 
@@ -44,22 +44,22 @@ export function SearchPage({ properties, loading }: SearchPageProps) {
         transition={{ duration: 0.4 }}
         className="mx-auto max-w-7xl"
       >
-        <h1 className="font-display text-3xl font-bold text-sand text-glow sm:text-4xl">
+        <h1 className="font-display text-3xl font-bold text-white text-glow sm:text-4xl">
           Search Makazi
         </h1>
-        <p className="mt-1 text-sm text-sand/60">Browse available houses and rooms across Dar es Salaam</p>
+        <p className="mt-1 text-sm text-white/60">Browse available houses and rooms across Dar es Salaam</p>
 
-        {/* Search bar */}
+        {/* Search bar — pure liquid black glass */}
         <div className="mt-6 flex gap-3">
-          <div className="glass flex flex-1 items-center gap-2 rounded-full px-5 py-3">
-            <Search size={18} className="text-sand/50" />
+          <div className="liquid-black flex flex-1 items-center gap-2 rounded-full px-5 py-3">
+            <Search size={18} className="text-white/50" />
             <input
               type="text"
               placeholder="Search by name or area..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="flex-1 bg-transparent text-sand placeholder:text-sand/40 focus:outline-none"
-              onFocus={(e) => (e.currentTarget.parentElement!.style.boxShadow = '0 0 0 1px rgba(120, 1, 22, 0.5), 0 0 16px rgba(120, 1, 22, 0.2)')}
+              className="relative z-10 flex-1 bg-transparent text-white placeholder:text-white/40 focus:outline-none"
+              onFocus={(e) => (e.currentTarget.parentElement!.style.boxShadow = '0 0 0 1px rgba(120, 1, 22, 0.5), 0 0 16px rgba(120, 1, 22, 0.25)')}
               onBlur={(e) => (e.currentTarget.parentElement!.style.boxShadow = '')}
             />
           </div>
@@ -84,61 +84,61 @@ export function SearchPage({ properties, loading }: SearchPageProps) {
             transition={{ duration: 0.3 }}
             className="mt-4 overflow-hidden"
           >
-            <GlassCard className="p-5">
+            <div className="liquid-black rounded-2xl p-5">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {/* Area filter */}
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-sand/60">Area</label>
+                  <label className="mb-1.5 block text-xs font-medium text-white/60">Area</label>
                   <select
                     value={areaFilter}
                     onChange={(e) => setAreaFilter(e.target.value)}
-                    className="glass w-full rounded-xl px-3 py-2.5 text-sm text-sand focus:outline-none"
+                    className="glass w-full rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none"
                   >
-                    <option value="all" className="bg-cyprus-600">All Areas</option>
+                    <option value="all" className="bg-black">All Areas</option>
                     {[...AREAS].map((a) => (
-                      <option key={a} value={a} className="bg-cyprus-600">{a}</option>
+                      <option key={a} value={a} className="bg-black">{a}</option>
                     ))}
                   </select>
                 </div>
 
                 {/* Property type filter */}
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-sand/60">Property Type</label>
+                  <label className="mb-1.5 block text-xs font-medium text-white/60">Property Type</label>
                   <select
                     value={typeFilter}
                     onChange={(e) => setTypeFilter(e.target.value)}
-                    className="glass w-full rounded-xl px-3 py-2.5 text-sm text-sand focus:outline-none"
+                    className="glass w-full rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none"
                   >
-                    <option value="all" className="bg-cyprus-600">All Types</option>
+                    <option value="all" className="bg-black">All Types</option>
                     {[...PROPERTY_TYPES].map((t) => (
-                      <option key={t} value={t} className="bg-cyprus-600">{t}</option>
+                      <option key={t} value={t} className="bg-black">{t}</option>
                     ))}
                   </select>
                 </div>
 
                 {/* Price range filter */}
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-sand/60">Price Range (TZS/mo)</label>
+                  <label className="mb-1.5 block text-xs font-medium text-white/60">Price Range (TZS/mo)</label>
                   <select
                     value={priceRange}
                     onChange={(e) => setPriceRange(e.target.value)}
-                    className="glass w-full rounded-xl px-3 py-2.5 text-sm text-sand focus:outline-none"
+                    className="glass w-full rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none"
                   >
-                    <option value="all" className="bg-cyprus-600">Any Price</option>
-                    <option value="0-500000" className="bg-cyprus-600">Up to 500K</option>
-                    <option value="500000-1000000" className="bg-cyprus-600">500K – 1M</option>
-                    <option value="1000000-2000000" className="bg-cyprus-600">1M – 2M</option>
-                    <option value="2000000-0" className="bg-cyprus-600">2M+</option>
+                    <option value="all" className="bg-black">Any Price</option>
+                    <option value="0-500000" className="bg-black">Up to 500K</option>
+                    <option value="500000-1000000" className="bg-black">500K – 1M</option>
+                    <option value="1000000-2000000" className="bg-black">1M – 2M</option>
+                    <option value="2000000-0" className="bg-black">2M+</option>
                   </select>
                 </div>
 
                 {/* Availability filter */}
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-sand/60">Availability</label>
+                  <label className="mb-1.5 block text-xs font-medium text-white/60">Availability</label>
                   <button
                     onClick={() => setAvailableOnly(!availableOnly)}
                     className={`glass flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm transition-all ${
-                      availableOnly ? 'text-sand ring-1 ring-maroon-500/50' : 'text-sand/60'
+                      availableOnly ? 'text-white ring-1 ring-maroon-500/50' : 'text-white/60'
                     }`}
                   >
                     {availableOnly ? 'Available Only' : 'All Properties'}
@@ -146,7 +146,7 @@ export function SearchPage({ properties, loading }: SearchPageProps) {
                   </button>
                 </div>
               </div>
-            </GlassCard>
+            </div>
           </motion.div>
         )}
       </motion.div>
@@ -155,10 +155,10 @@ export function SearchPage({ properties, loading }: SearchPageProps) {
       <div className="mx-auto mt-8 max-w-7xl">
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-sand/30 border-t-sand" />
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/30 border-t-white" />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="py-20 text-center text-sand/50">
+          <div className="py-20 text-center text-white/50">
             <p className="text-lg">No properties match your filters</p>
             <p className="mt-1 text-sm">Try adjusting your search criteria</p>
           </div>
@@ -190,22 +190,26 @@ export function SearchPage({ properties, loading }: SearchPageProps) {
 
 function PropertyCard({ property, index, onClick }: { property: Property; index: number; onClick: () => void }) {
   const primaryImage = property.image_urls?.[0] || 'https://images.pexels.com/photos/6585598/pexels-photo-6585598.jpeg?auto=compress&cs=tinysrgb&w=600';
+  const { onMouseMove, onMouseLeave } = useTilt(10);
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: Math.min(index * 0.05, 0.4) }}
+      className="border-beam rounded-2xl"
     >
-      <GlassCard
-        glow={property.available}
+      <div
         onClick={onClick}
-        className={`group overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl ${
+        onMouseMove={onMouseMove}
+        onMouseLeave={onMouseLeave}
+        style={{ transformStyle: 'preserve-3d' }}
+        className={`liquid-black group cursor-pointer overflow-hidden rounded-2xl transition-transform duration-200 ease-out ${
           !property.available ? 'opacity-60' : ''
         }`}
       >
         {/* Image */}
-        <div className="relative aspect-[3/4] overflow-hidden rounded-2xl">
+        <div className="relative aspect-video overflow-hidden rounded-t-2xl">
           <img
             src={primaryImage}
             alt={property.name}
@@ -221,7 +225,7 @@ function PropertyCard({ property, index, onClick }: { property: Property; index:
                 Available
               </span>
             ) : (
-              <span className="glass-dark flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-medium text-sand/50 ring-1 ring-sand/10">
+              <span className="glass-dark flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-medium text-white/50 ring-1 ring-white/10">
                 <XCircle size={10} />
                 Not Available
               </span>
@@ -229,7 +233,7 @@ function PropertyCard({ property, index, onClick }: { property: Property; index:
           </div>
           {/* Price badge */}
           <div className="absolute bottom-2 right-2">
-            <span className="glass-dark rounded-full px-2 py-1 text-[10px] font-semibold text-sand">
+            <span className="glass-dark rounded-full px-2 py-1 text-[10px] font-semibold text-white">
               {formatPrice(property.price)}
             </span>
           </div>
@@ -237,12 +241,12 @@ function PropertyCard({ property, index, onClick }: { property: Property; index:
 
         {/* Info */}
         <div className="p-2.5">
-          <h3 className="truncate font-display text-xs font-semibold text-sand sm:text-sm">{property.name}</h3>
-          <div className="mt-1 flex items-center gap-1 text-[10px] text-sand/50">
+          <h3 className="truncate font-display text-xs font-semibold text-white sm:text-sm">{property.name}</h3>
+          <div className="mt-1 flex items-center gap-1 text-[10px] text-white/50">
             <MapPin size={10} />
             <span className="truncate">{property.area}</span>
           </div>
-          <div className="mt-1 flex items-center gap-2 text-[10px] text-sand/50">
+          <div className="mt-1 flex items-center gap-2 text-[10px] text-white/50">
             <span className="flex items-center gap-0.5"><Bed size={10} />{property.bedrooms}</span>
             <span className="flex items-center gap-0.5"><Bath size={10} />{property.bathrooms}</span>
             <span className="truncate">{property.property_type}</span>
@@ -251,24 +255,11 @@ function PropertyCard({ property, index, onClick }: { property: Property; index:
 
         {/* View details button */}
         <div className="px-2.5 pb-2.5">
-          <button
-            className="glass-button-accent w-full rounded-xl py-2 text-[10px] font-medium text-white transition-all duration-200 ease-out sm:text-xs"
-            style={{ transformStyle: 'preserve-3d' }}
-            onMouseMove={(e) => {
-              const target = e.currentTarget;
-              const rect = target.getBoundingClientRect();
-              const x = e.clientX - rect.left - rect.width / 2;
-              const y = e.clientY - rect.top - rect.height / 2;
-              const rotateY = (x / rect.width) * 8;
-              const rotateX = -(y / rect.height) * 8;
-              target.style.transform = `perspective(700px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(4px)`;
-            }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = ''; }}
-          >
+          <button className="sheen-sweep glass-button-accent w-full rounded-xl py-2 text-[10px] font-medium text-white transition-all duration-200 ease-out sm:text-xs">
             View Details
           </button>
         </div>
-      </GlassCard>
+      </div>
     </motion.div>
   );
 }

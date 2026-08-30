@@ -284,7 +284,7 @@ export function PropertyDetailModal({ property, onClose }: PropertyDetailModalPr
                       initial={{ opacity: 0, scale: 0.95, y: 16 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      className="border-beam my-auto w-full max-w-sm rounded-2xl"
+                      className="my-auto w-full max-w-sm rounded-2xl"
                     >
                       <div className="liquid-black max-h-[80vh] overflow-y-auto rounded-2xl p-5">
                         <h3 className="mb-4 font-display text-base font-semibold text-white">Request Booking</h3>

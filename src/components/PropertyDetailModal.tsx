@@ -45,6 +45,7 @@ export function PropertyDetailModal({ property, onClose }: PropertyDetailModalPr
   const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
   const [selectedBank, setSelectedBank] = useState<string | null>(null);
   const [showBankList, setShowBankList] = useState(false);
+  const [accountNumber, setAccountNumber] = useState('');
   const [amount, setAmount] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -78,6 +79,7 @@ export function PropertyDetailModal({ property, onClose }: PropertyDetailModalPr
         `Months to pay: ${monthsToPay}`,
         currentLocation ? `Current location: ${currentLocation}` : null,
         paymentMethod ? `Payment method: ${paymentLabel}` : null,
+        accountNumber ? `Account number: ${accountNumber}` : null,
         amount ? `Amount: ${amount} TZS` : null,
       ].filter(Boolean);
       const { error } = await supabase.from('bookings').insert({
@@ -108,6 +110,7 @@ export function PropertyDetailModal({ property, onClose }: PropertyDetailModalPr
     setPaymentMethod(null);
     setSelectedBank(null);
     setShowBankList(false);
+    setAccountNumber('');
     setAmount('');
     setGalleryIndex(0);
     onClose();
@@ -366,6 +369,16 @@ export function PropertyDetailModal({ property, onClose }: PropertyDetailModalPr
                                 <ChevronDown size={14} />
                               </motion.span>
                             </button>
+
+                            {paymentMethod === 'bank' && selectedBank && (
+                              <input
+                                type="text"
+                                placeholder="Your account number *"
+                                value={accountNumber}
+                                onChange={(e) => setAccountNumber(e.target.value)}
+                                className="glass mt-2 w-full rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-white/40 focus:outline-none"
+                              />
+                            )}
                           </div>
 
                           <div>

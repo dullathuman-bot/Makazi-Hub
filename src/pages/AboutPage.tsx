@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Phone, MessageCircle, MapPin, Heart, Building2, Target, Eye, ChevronDown } from 'lucide-react';
+import { Phone, MessageCircle, MapPin, Heart, Building2, Target, Eye, ChevronDown, Sparkles } from 'lucide-react';
 import type { SiteSettings } from '@/lib/types';
 
 interface AboutPageProps {
@@ -21,7 +21,7 @@ export function AboutPage({ settings }: AboutPageProps) {
       content: (
         <p className="text-sm leading-relaxed text-white/80">
           {settings?.about_text ||
-            'Makazi Hub is dedicated to helping people find reliable, quality housing in Dar es Salaam. Our mission is to make house hunting simple, transparent, and stress-free.'}
+            "Makazi Hub was built to solve a problem every renter in Dar es Salaam knows too well — finding a good, honest place to live shouldn't take weeks of phone calls and unreliable brokers. We connect tenants directly with verified landlords, so every listing you see is real, every photo is genuine, and every booking is handled transparently from search to move-in. Whether you're a student looking for a single room, a young professional wanting a modern studio, or a family searching for a full house, Makazi Hub brings the whole city's rental market into one simple, trustworthy place."}
         </p>
       ),
     },
@@ -31,7 +31,10 @@ export function AboutPage({ settings }: AboutPageProps) {
       title: 'Our Mission',
       content: (
         <p className="text-sm leading-relaxed text-white/80">
-          To make finding a home in Dar es Salaam effortless, transparent, and accessible to everyone.
+          To make finding a home in Dar es Salaam effortless, transparent, and accessible to everyone —
+          by removing the middlemen, the hidden fees, and the guesswork that usually come with renting.
+          We verify every property ourselves, keep pricing honest, and make sure landlords and tenants can
+          talk to each other directly, without unnecessary delays or commissions.
         </p>
       ),
     },
@@ -41,8 +44,24 @@ export function AboutPage({ settings }: AboutPageProps) {
       title: 'Our Vision',
       content: (
         <p className="text-sm leading-relaxed text-white/80">
-          A city where everyone finds a place they love to call home — without the stress of traditional house hunting.
+          A Dar es Salaam where everyone — newcomers and long-time residents alike — can find a place they
+          genuinely love calling home, in minutes rather than weeks. We imagine a rental market built on
+          trust, where landlords are rewarded for honesty and tenants never have to worry about being
+          misled, overcharged, or scammed.
         </p>
+      ),
+    },
+    {
+      id: 'why',
+      icon: Sparkles,
+      title: 'Why Choose Us',
+      content: (
+        <ul className="space-y-2 text-sm leading-relaxed text-white/80">
+          <li>• Every property is personally verified before it's listed.</li>
+          <li>• No broker commissions — you deal directly with the landlord.</li>
+          <li>• Simple mobile money and bank payment options built right in.</li>
+          <li>• Real photos, honest prices, and a support line that actually responds.</li>
+        </ul>
       ),
     },
     {

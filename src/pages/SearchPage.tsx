@@ -165,7 +165,7 @@ export function SearchPage({ properties, loading }: SearchPageProps) {
         ) : (
           <motion.div
             layout
-            className="grid grid-cols-3 gap-3 sm:gap-4 lg:grid-cols-4"
+            className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4"
           >
             {filtered.map((property, i) => (
               <PropertyCard

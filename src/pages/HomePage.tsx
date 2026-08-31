@@ -1,5 +1,4 @@
-import { useRef } from 'react';
-import { motion, useScroll, useTransform, type MotionValue } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Search, Building2, ShieldCheck, Sparkles, KeyRound, MessageSquareText, Wallet } from 'lucide-react';
 import { GlassButton } from '@/components/ui/GlassButton';
 import type { SiteSettings } from '@/lib/types';
@@ -9,14 +8,22 @@ interface HomePageProps {
   onSearch: () => void;
 }
 
-// A short sequence of photos that crossfade into one another as the user
-// scrolls through the tall wrapper below — exterior, then further inside
-// with each step, like walking through the house room by room.
-const TOUR_IMAGES = [
-  'https://images.pexels.com/photos/7031607/pexels-photo-7031607.jpeg?auto=compress&cs=tinysrgb&w=1400',
-  'https://images.pexels.com/photos/6920439/pexels-photo-6920439.jpeg?auto=compress&cs=tinysrgb&w=1400',
-  'https://images.pexels.com/photos/6585598/pexels-photo-6585598.jpeg?auto=compress&cs=tinysrgb&w=1400',
-  'https://images.pexels.com/photos/7587828/pexels-photo-7587828.jpeg?auto=compress&cs=tinysrgb&w=1400',
+const SHOWCASE = [
+  {
+    src: 'https://images.pexels.com/photos/7031607/pexels-photo-7031607.jpeg?auto=compress&cs=tinysrgb&w=1000',
+    title: 'Modern exteriors',
+    desc: 'Clean, contemporary homes across the city, photographed exactly as they are.',
+  },
+  {
+    src: 'https://images.pexels.com/photos/6585598/pexels-photo-6585598.jpeg?auto=compress&cs=tinysrgb&w=1000',
+    title: 'Comfortable living rooms',
+    desc: 'Spaces built for real life — furnished, spacious, and ready to move into.',
+  },
+  {
+    src: 'https://images.pexels.com/photos/7587828/pexels-photo-7587828.jpeg?auto=compress&cs=tinysrgb&w=1000',
+    title: 'Quiet bedrooms',
+    desc: 'A place to rest, in neighborhoods across Dar es Salaam that fit your life.',
+  },
 ];
 
 const STEPS = [
@@ -152,13 +159,50 @@ export function HomePage({ settings, onSearch }: HomePageProps) {
         </div>
       </motion.div>
 
-      {/* Scroll "tour" — one image that walks you deeper into the house as you scroll */}
-      <div className="mx-auto mt-20 w-full max-w-4xl">
-        <p className="mb-4 text-center text-xs font-semibold uppercase tracking-wide text-white/40">
-          Take a walk through
+      {/* Showcase — calm, static "breathing" photos with real copy underneath */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-80px' }}
+        transition={{ duration: 0.6 }}
+        className="mx-auto mt-20 w-full max-w-4xl"
+      >
+        <h2 className="text-center font-display text-2xl font-bold text-white sm:text-3xl">
+          A glimpse of what's waiting for you
+        </h2>
+        <p className="mx-auto mt-2 max-w-lg text-center text-sm text-white/55">
+          Every home on Makazi Hub is real, photographed, and verified — this is a small taste of what
+          you'll find once you start browsing.
         </p>
-      </div>
-      <ScrollTour images={TOUR_IMAGES} />
+
+        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
+          {SHOWCASE.map((item, i) => (
+            <motion.div
+              key={item.title}
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              className="overflow-hidden rounded-2xl shadow-lg shadow-black/40"
+            >
+              <div className="relative aspect-[4/5] overflow-hidden">
+                <img
+                  src={item.src}
+                  alt={item.title}
+                  className="animate-breathe h-full w-full object-cover"
+                  style={{ animationDelay: `${i * 1.5}s` }}
+                  loading="lazy"
+                />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-4">
+                  <h3 className="font-display text-sm font-semibold text-white">{item.title}</h3>
+                  <p className="mt-1 text-xs leading-relaxed text-white/70">{item.desc}</p>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
 
       {/* How it works — explains the value prop, gives the page real substance */}
       <motion.div
@@ -223,59 +267,4 @@ export function HomePage({ settings, onSearch }: HomePageProps) {
       </motion.div>
     </div>
   );
-}
-
-function ScrollTour({ images }: { images: string[] }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: containerRef, offset: ['start start', 'end end'] });
-
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.28]);
-  const n = images.length;
-
-  return (
-    <div ref={containerRef} className="relative mx-auto mt-4 w-full" style={{ height: `${n * 100}vh` }}>
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
-        <motion.div className="absolute inset-0" style={{ scale }}>
-          {images.map((src, i) => (
-            <TourImage key={i} src={src} index={i} total={n} scrollYProgress={scrollYProgress} />
-          ))}
-        </motion.div>
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/70" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-8 flex justify-center">
-          <span className="liquid-black rounded-full px-4 py-2 text-xs text-white/70">
-            Scroll to walk through the house
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function TourImage({
-  src,
-  index,
-  total,
-  scrollYProgress,
-}: {
-  src: string;
-  index: number;
-  total: number;
-  scrollYProgress: MotionValue<number>;
-}) {
-  const segment = 1 / total;
-  const start = index * segment;
-  const end = (index + 1) * segment;
-  const fadeIn = start + segment * 0.15;
-  const fadeOutStart = end - segment * 0.15;
-
-  const isFirst = index === 0;
-  const isLast = index === total - 1;
-
-  const opacity = useTransform(
-    scrollYProgress,
-    isFirst ? [start, fadeIn, fadeOutStart, end] : isLast ? [start, fadeIn, end] : [start, fadeIn, fadeOutStart, end],
-    isFirst ? [1, 1, 1, 0] : isLast ? [0, 1, 1] : [0, 1, 1, 0]
-  );
-
-  return <motion.img src={src} alt="" style={{ opacity }} className="absolute inset-0 h-full w-full object-cover" />;
 }

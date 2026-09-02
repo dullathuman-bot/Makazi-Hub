@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Phone, MessageCircle, CalendarDays, CheckCircle2, X, MapPin, Bed, Bath, Wifi, Car, ShieldCheck, AirVent, Trees, Dumbbell, Waves, Home, ChevronDown, Landmark } from 'lucide-react';
+import { Phone, MessageCircle, CalendarDays, CheckCircle2, X, MapPin, Bed, Bath, Wifi, Car, ShieldCheck, AirVent, Trees, Dumbbell, Waves, Home, ChevronDown, Landmark, PlayCircle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import type { Property } from '@/lib/types';
 
@@ -54,14 +54,21 @@ export function PropertyDetailModal({ property, onClose }: PropertyDetailModalPr
   const images = property?.image_urls && property.image_urls.length > 0
     ? property.image_urls
     : ['https://images.pexels.com/photos/6585598/pexels-photo-6585598.jpeg?auto=compress&cs=tinysrgb&w=1200'];
+  const imageCount = images.length;
+  const media: { type: 'image' | 'video'; url: string }[] = [
+    ...images.map((url) => ({ type: 'image' as const, url })),
+    ...(property?.video_url ? [{ type: 'video' as const, url: property.video_url }] : []),
+  ];
 
   useEffect(() => {
-    if (!open || images.length <= 1) return;
+    if (!open || imageCount <= 1) return;
     const t = setInterval(() => {
-      setGalleryIndex((i) => (i + 1) % images.length);
+      // Freeze the slideshow while a video is being viewed instead of
+      // interrupting playback; resumes once the user picks an image again.
+      setGalleryIndex((i) => (i >= imageCount ? i : (i + 1) % imageCount));
     }, 4500);
     return () => clearInterval(t);
-  }, [open, images.length]);
+  }, [open, imageCount]);
 
   useEffect(() => {
     setGalleryIndex(0);
@@ -146,7 +153,7 @@ export function PropertyDetailModal({ property, onClose }: PropertyDetailModalPr
                 <X size={18} />
               </button>
 
-              {/* Breathing main image + thumbnails */}
+              {/* Breathing main image / video + thumbnails */}
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded-tl-3xl">
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -155,13 +162,24 @@ export function PropertyDetailModal({ property, onClose }: PropertyDetailModalPr
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.7 }}
-                    className="absolute inset-0 animate-breathe"
+                    className={`absolute inset-0 ${media[galleryIndex]?.type === 'image' ? 'animate-breathe' : ''}`}
                   >
-                    <img
-                      src={images[galleryIndex]}
-                      alt={property.name}
-                      className="h-full w-full object-cover"
-                    />
+                    {media[galleryIndex]?.type === 'video' ? (
+                      <video
+                        src={media[galleryIndex].url}
+                        controls
+                        autoPlay
+                        muted
+                        playsInline
+                        className="h-full w-full bg-black object-cover"
+                      />
+                    ) : (
+                      <img
+                        src={media[galleryIndex]?.url}
+                        alt={property.name}
+                        className="h-full w-full object-cover"
+                      />
+                    )}
                   </motion.div>
                 </AnimatePresence>
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
@@ -179,17 +197,23 @@ export function PropertyDetailModal({ property, onClose }: PropertyDetailModalPr
                   )}
                 </div>
 
-                {images.length > 1 && (
+                {media.length > 1 && (
                   <div className="absolute left-3 top-3 flex max-h-[85%] flex-col gap-2 overflow-y-auto scrollbar-hide">
-                    {images.map((img, i) => (
+                    {media.map((item, i) => (
                       <button
                         key={i}
                         onClick={() => setGalleryIndex(i)}
-                        className={`h-11 w-11 shrink-0 overflow-hidden rounded-lg transition-all ${
+                        className={`relative h-11 w-11 shrink-0 overflow-hidden rounded-lg transition-all ${
                           i === galleryIndex ? 'ring-2 ring-white' : 'opacity-50 ring-1 ring-white/20 hover:opacity-80'
                         }`}
                       >
-                        <img src={img} alt="" className="h-full w-full object-cover" />
+                        {item.type === 'video' ? (
+                          <div className="flex h-full w-full items-center justify-center bg-black">
+                            <PlayCircle size={18} className="text-white" />
+                          </div>
+                        ) : (
+                          <img src={item.url} alt="" className="h-full w-full object-cover" />
+                        )}
                       </button>
                     ))}
                   </div>
@@ -287,7 +311,7 @@ export function PropertyDetailModal({ property, onClose }: PropertyDetailModalPr
                       initial={{ opacity: 0, scale: 0.95, y: 16 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      className="my-auto w-full max-w-sm rounded-2xl"
+                      className="border-beam my-auto w-full max-w-sm rounded-2xl"
                     >
                       <div className="liquid-black max-h-[80vh] overflow-y-auto rounded-2xl p-5">
                         <h3 className="mb-4 font-display text-base font-semibold text-white">Request Booking</h3>

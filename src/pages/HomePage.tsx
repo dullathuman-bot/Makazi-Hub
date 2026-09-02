@@ -8,7 +8,9 @@ interface HomePageProps {
   onSearch: () => void;
 }
 
-const SHOWCASE = [
+// Fallback photos shown only if the admin hasn't uploaded any showcase
+// media yet — CSS-only "breathing" pulse, no scroll tracking, light on mobile.
+const DEFAULT_SHOWCASE = [
   {
     src: 'https://images.pexels.com/photos/7031607/pexels-photo-7031607.jpeg?auto=compress&cs=tinysrgb&w=1000',
     title: 'Modern exteriors',
@@ -24,6 +26,12 @@ const SHOWCASE = [
     title: 'Quiet bedrooms',
     desc: 'A place to rest, in neighborhoods across Dar es Salaam that fit your life.',
   },
+];
+
+const SHOWCASE_CAPTIONS = [
+  { title: 'Real homes, real photos', desc: 'Every image here comes straight from a live Makazi Hub listing.' },
+  { title: 'Available right now', desc: 'These are homes you can book today — not stock photos.' },
+  { title: 'See it before you visit', desc: 'Know exactly what you\u2019re getting before you reach out.' },
 ];
 
 const STEPS = [
@@ -50,6 +58,21 @@ const STEPS = [
 ];
 
 export function HomePage({ settings, onSearch }: HomePageProps) {
+  const hasCustomShowcase = settings?.showcase_images && settings.showcase_images.length > 0;
+  const showcaseItems: { type: 'image' | 'video'; src: string; title: string; desc: string }[] = hasCustomShowcase
+    ? [
+        ...settings!.showcase_images!.map((src, i) => ({
+          type: 'image' as const,
+          src,
+          title: SHOWCASE_CAPTIONS[i % SHOWCASE_CAPTIONS.length].title,
+          desc: SHOWCASE_CAPTIONS[i % SHOWCASE_CAPTIONS.length].desc,
+        })),
+        ...(settings?.showcase_video_url
+          ? [{ type: 'video' as const, src: settings.showcase_video_url, title: 'See it in motion', desc: 'A quick video look at one of our homes.' }]
+          : []),
+      ]
+    : DEFAULT_SHOWCASE.map((item) => ({ type: 'image' as const, ...item }));
+
   return (
     <div className="relative flex min-h-screen flex-col px-6 pb-40 pt-16 sm:px-10 lg:px-20">
       {/* Logo mark — top right, plain, no border/glass frame */}
@@ -176,9 +199,9 @@ export function HomePage({ settings, onSearch }: HomePageProps) {
         </p>
 
         <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
-          {SHOWCASE.map((item, i) => (
+          {showcaseItems.map((item, i) => (
             <motion.div
-              key={item.title}
+              key={item.src + i}
               initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-40px' }}
@@ -186,13 +209,24 @@ export function HomePage({ settings, onSearch }: HomePageProps) {
               className="overflow-hidden rounded-2xl shadow-lg shadow-black/40"
             >
               <div className="relative aspect-[4/5] overflow-hidden">
-                <img
-                  src={item.src}
-                  alt={item.title}
-                  className="animate-breathe h-full w-full object-cover"
-                  style={{ animationDelay: `${i * 1.5}s` }}
-                  loading="lazy"
-                />
+                {item.type === 'video' ? (
+                  <video
+                    src={item.src}
+                    className="h-full w-full object-cover"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                  />
+                ) : (
+                  <img
+                    src={item.src}
+                    alt={item.title}
+                    className="animate-breathe h-full w-full object-cover"
+                    style={{ animationDelay: `${i * 1.5}s` }}
+                    loading="lazy"
+                  />
+                )}
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-4">
                   <h3 className="font-display text-sm font-semibold text-white">{item.title}</h3>

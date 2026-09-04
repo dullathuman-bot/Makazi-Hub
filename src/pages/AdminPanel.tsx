@@ -1,13 +1,14 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Building2, CalendarCheck, Settings, Plus, Pencil, Trash2,
-  CheckCircle2, Clock, XCircle, LogOut, Save, Star,
+  CheckCircle2, Clock, XCircle, LogOut, Save, ImagePlus, Video, X, Loader2,
 } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { GlassModal } from '@/components/ui/GlassModal';
 import { supabase } from '@/lib/supabase';
+import { uploadMedia } from '@/lib/upload';
 import type { Property, Booking, SiteSettings } from '@/lib/types';
 import { PROPERTY_TYPES, AREAS } from '@/lib/types';
 
@@ -55,8 +56,17 @@ export function AdminPanel({ onLogout }: AdminPanelProps) {
     loadData();
   };
 
-  const handleBookingStatus = async (id: string, status: string) => {
+  // Approving a booking marks its property as booked (not available).
+  // Rejecting one frees the property back up.
+  const handleBookingStatus = async (id: string, status: string, propertyId: string | null) => {
     await supabase.from('bookings').update({ status }).eq('id', id);
+    if (propertyId) {
+      if (status === 'approved') {
+        await supabase.from('properties').update({ available: false }).eq('id', propertyId);
+      } else if (status === 'rejected') {
+        await supabase.from('properties').update({ available: true }).eq('id', propertyId);
+      }
+    }
     loadData();
   };
 
@@ -186,11 +196,16 @@ function PropertiesTab({ properties, onAdd, onEdit, onDelete }: {
                 alt={p.name}
                 className="h-full w-full object-cover"
               />
+              {p.video_url && (
+                <span className="glass-dark absolute left-2 top-2 flex items-center gap-1 rounded-full px-2 py-1 text-[10px] text-white/80">
+                  <Video size={10} /> Video
+                </span>
+              )}
               <div className="absolute right-2 top-2">
                 {p.available ? (
                   <span className="glass rounded-full px-2 py-1 text-[10px] font-medium text-green-300 ring-1 ring-green-400/30">Available</span>
                 ) : (
-                  <span className="glass-dark rounded-full px-2 py-1 text-[10px] font-medium text-white/50">Not Available</span>
+                  <span className="glass-dark rounded-full px-2 py-1 text-[10px] font-medium text-white/50">Booked</span>
                 )}
               </div>
             </div>
@@ -224,7 +239,7 @@ function PropertiesTab({ properties, onAdd, onEdit, onDelete }: {
 
 function BookingsTab({ bookings, onStatus, onDelete }: {
   bookings: (Booking & { properties?: { name: string } | null })[];
-  onStatus: (id: string, status: string) => void;
+  onStatus: (id: string, status: string, propertyId: string | null) => void;
   onDelete: (id: string) => void;
 }) {
   const statusConfig: Record<string, { icon: typeof Clock; color: string; bg: string }> = {
@@ -270,13 +285,18 @@ function BookingsTab({ bookings, onStatus, onDelete }: {
               <div className="flex gap-2">
                 {b.status === 'pending' && (
                   <>
-                    <button onClick={() => onStatus(b.id, 'approved')} className="sheen-sweep glass-button-accent-soft flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs text-white">
+                    <button onClick={() => onStatus(b.id, 'approved', b.property_id)} className="sheen-sweep glass-button-accent-soft flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs text-white">
                       <CheckCircle2 size={14} /> Approve
                     </button>
-                    <button onClick={() => onStatus(b.id, 'rejected')} className="glass-dark flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs text-red-300">
+                    <button onClick={() => onStatus(b.id, 'rejected', b.property_id)} className="glass-dark flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs text-red-300">
                       <XCircle size={14} /> Reject
                     </button>
                   </>
+                )}
+                {b.status === 'approved' && (
+                  <button onClick={() => onStatus(b.id, 'rejected', b.property_id)} className="glass-dark flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs text-white/70">
+                    <XCircle size={14} /> Cancel booking
+                  </button>
                 )}
                 <button onClick={() => onDelete(b.id)} className="glass-dark flex items-center justify-center rounded-lg px-2.5 py-1.5 text-xs text-red-300 hover:bg-red-500/20">
                   <Trash2 size={14} />
@@ -299,8 +319,12 @@ function SettingsTab({ settings, onSave }: { settings: SiteSettings | null; onSa
   const [aboutText, setAboutText] = useState(settings?.about_text || '');
   const [contactPhone, setContactPhone] = useState(settings?.contact_phone || '+255693910992');
   const [contactWhatsapp, setContactWhatsapp] = useState(settings?.contact_whatsapp || 'https://wa.me/255693910992');
+  const [showcaseImages, setShowcaseImages] = useState<string[]>(settings?.showcase_images || []);
+  const [showcaseVideoUrl, setShowcaseVideoUrl] = useState(settings?.showcase_video_url || '');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [uploadingShowcase, setUploadingShowcase] = useState(false);
+  const [uploadingShowcaseVideo, setUploadingShowcaseVideo] = useState(false);
 
   useEffect(() => {
     if (settings) {
@@ -310,8 +334,36 @@ function SettingsTab({ settings, onSave }: { settings: SiteSettings | null; onSa
       setAboutText(settings.about_text || '');
       setContactPhone(settings.contact_phone || '+255693910992');
       setContactWhatsapp(settings.contact_whatsapp || 'https://wa.me/255693910992');
+      setShowcaseImages(settings.showcase_images || []);
+      setShowcaseVideoUrl(settings.showcase_video_url || '');
     }
   }, [settings]);
+
+  const handleShowcaseUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setUploadingShowcase(true);
+    try {
+      const uploaded = await Promise.all(Array.from(files).map((f) => uploadMedia(f, 'showcase')));
+      setShowcaseImages((prev) => [...prev, ...uploaded]);
+    } catch (err) {
+      console.error('Showcase upload error:', err);
+    } finally {
+      setUploadingShowcase(false);
+    }
+  };
+
+  const handleShowcaseVideoUpload = async (file: File | null) => {
+    if (!file) return;
+    setUploadingShowcaseVideo(true);
+    try {
+      const url = await uploadMedia(file, 'showcase');
+      setShowcaseVideoUrl(url);
+    } catch (err) {
+      console.error('Showcase video upload error:', err);
+    } finally {
+      setUploadingShowcaseVideo(false);
+    }
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -324,6 +376,8 @@ function SettingsTab({ settings, onSave }: { settings: SiteSettings | null; onSa
         about_text: aboutText || null,
         contact_phone: contactPhone,
         contact_whatsapp: contactWhatsapp,
+        showcase_images: showcaseImages.length > 0 ? showcaseImages : null,
+        showcase_video_url: showcaseVideoUrl || null,
       });
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
@@ -398,12 +452,53 @@ function SettingsTab({ settings, onSave }: { settings: SiteSettings | null; onSa
               />
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <GlassButton onClick={handleSave} disabled={saving}>
-              <span className="flex items-center gap-2"><Save size={16} /> {saving ? 'Saving...' : 'Save Changes'}</span>
-            </GlassButton>
-            {saved && <span className="text-sm text-green-300">Saved!</span>}
-          </div>
+        </div>
+      </GlassCard>
+
+      <GlassCard className="p-5">
+        <h3 className="mb-1 font-display text-lg font-semibold text-white">Homepage Showcase</h3>
+        <p className="mb-4 text-xs text-white/50">Photos (and an optional video) shown in the "glimpse of what's waiting for you" section on the homepage.</p>
+
+        <div className="mb-4 flex flex-wrap gap-3">
+          {showcaseImages.map((url, i) => (
+            <div key={i} className="group relative h-20 w-20 overflow-hidden rounded-lg">
+              <img src={url} alt="" className="h-full w-full object-cover" />
+              <button
+                onClick={() => setShowcaseImages((prev) => prev.filter((_, idx) => idx !== i))}
+                className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/70 text-white opacity-0 transition-opacity group-hover:opacity-100"
+              >
+                <X size={12} />
+              </button>
+            </div>
+          ))}
+          <label className="glass-dark flex h-20 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg text-white/60 hover:text-white">
+            {uploadingShowcase ? <Loader2 size={18} className="animate-spin" /> : <ImagePlus size={18} />}
+            <span className="text-[9px]">Add photo</span>
+            <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleShowcaseUpload(e.target.files)} />
+          </label>
+        </div>
+
+        <div>
+          <label className="mb-1.5 block text-xs font-medium text-white/60">Showcase Video (optional)</label>
+          {showcaseVideoUrl ? (
+            <div className="flex items-center gap-2">
+              <video src={showcaseVideoUrl} className="h-16 w-24 rounded-lg object-cover" muted />
+              <button onClick={() => setShowcaseVideoUrl('')} className="glass-dark rounded-lg px-3 py-1.5 text-xs text-red-300">Remove</button>
+            </div>
+          ) : (
+            <label className="glass-dark flex w-fit cursor-pointer items-center gap-2 rounded-lg px-4 py-2.5 text-xs text-white/70 hover:text-white">
+              {uploadingShowcaseVideo ? <Loader2 size={14} className="animate-spin" /> : <Video size={14} />}
+              Upload video
+              <input type="file" accept="video/*" className="hidden" onChange={(e) => handleShowcaseVideoUpload(e.target.files?.[0] || null)} />
+            </label>
+          )}
+        </div>
+
+        <div className="mt-5 flex items-center gap-3">
+          <GlassButton onClick={handleSave} disabled={saving}>
+            <span className="flex items-center gap-2"><Save size={16} /> {saving ? 'Saving...' : 'Save Changes'}</span>
+          </GlassButton>
+          {saved && <span className="text-sm text-green-300">Saved!</span>}
         </div>
       </GlassCard>
     </div>
@@ -426,10 +521,14 @@ function PropertyFormModal({ open, property, onClose, onSaved }: {
   const [bedrooms, setBedrooms] = useState('0');
   const [bathrooms, setBathrooms] = useState('1');
   const [amenities, setAmenities] = useState('');
-  const [imageUrls, setImageUrls] = useState('');
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [videoUrl, setVideoUrl] = useState('');
   const [available, setAvailable] = useState(true);
   const [location, setLocation] = useState('');
   const [saving, setSaving] = useState(false);
+  const [uploadingImages, setUploadingImages] = useState(false);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (property) {
@@ -441,15 +540,42 @@ function PropertyFormModal({ open, property, onClose, onSaved }: {
       setBedrooms(String(property.bedrooms));
       setBathrooms(String(property.bathrooms));
       setAmenities(property.amenities?.join(', ') || '');
-      setImageUrls(property.image_urls?.join(', ') || '');
+      setImageUrls(property.image_urls || []);
+      setVideoUrl(property.video_url || '');
       setAvailable(property.available);
       setLocation(property.location || '');
     } else {
       setName(''); setDescription(''); setPrice(''); setArea('Mikocheni');
       setPropertyType('Studio'); setBedrooms('0'); setBathrooms('1');
-      setAmenities(''); setImageUrls(''); setAvailable(true); setLocation('');
+      setAmenities(''); setImageUrls([]); setVideoUrl(''); setAvailable(true); setLocation('');
     }
   }, [property, open]);
+
+  const handleImageUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setUploadingImages(true);
+    try {
+      const uploaded = await Promise.all(Array.from(files).map((f) => uploadMedia(f, 'properties')));
+      setImageUrls((prev) => [...prev, ...uploaded]);
+    } catch (err) {
+      console.error('Image upload error:', err);
+    } finally {
+      setUploadingImages(false);
+    }
+  };
+
+  const handleVideoUpload = async (file: File | null) => {
+    if (!file) return;
+    setUploadingVideo(true);
+    try {
+      const url = await uploadMedia(file, 'properties');
+      setVideoUrl(url);
+    } catch (err) {
+      console.error('Video upload error:', err);
+    } finally {
+      setUploadingVideo(false);
+    }
+  };
 
   const handleSave = async () => {
     if (!name || !price) return;
@@ -463,7 +589,8 @@ function PropertyFormModal({ open, property, onClose, onSaved }: {
       bedrooms: parseInt(bedrooms) || 0,
       bathrooms: parseInt(bathrooms) || 1,
       amenities: amenities.split(',').map(a => a.trim()).filter(Boolean),
-      image_urls: imageUrls.split(',').map(u => u.trim()).filter(Boolean),
+      image_urls: imageUrls,
+      video_url: videoUrl || null,
       available,
       location: location || null,
       updated_at: new Date().toISOString(),
@@ -551,11 +678,44 @@ function PropertyFormModal({ open, property, onClose, onSaved }: {
               className="glass w-full rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-1 focus:ring-maroon-500/50" />
           </div>
 
+          {/* Photo upload */}
           <div>
-            <label className="mb-1 block text-xs font-medium text-white/60">Image URLs (comma-separated)</label>
-            <input type="text" value={imageUrls} onChange={(e) => setImageUrls(e.target.value)}
-              placeholder="https://images.pexels.com/..., https://..."
-              className="glass w-full rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-1 focus:ring-maroon-500/50" />
+            <label className="mb-1.5 block text-xs font-medium text-white/60">Photos</label>
+            <div className="flex flex-wrap gap-2">
+              {imageUrls.map((url, i) => (
+                <div key={i} className="group relative h-16 w-16 overflow-hidden rounded-lg">
+                  <img src={url} alt="" className="h-full w-full object-cover" />
+                  <button
+                    onClick={() => setImageUrls((prev) => prev.filter((_, idx) => idx !== i))}
+                    className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-black/70 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                  >
+                    <X size={10} />
+                  </button>
+                </div>
+              ))}
+              <label className="glass-dark flex h-16 w-16 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg text-white/60 hover:text-white">
+                {uploadingImages ? <Loader2 size={16} className="animate-spin" /> : <ImagePlus size={16} />}
+                <span className="text-[8px]">Add</span>
+                <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleImageUpload(e.target.files)} />
+              </label>
+            </div>
+          </div>
+
+          {/* Video upload */}
+          <div>
+            <label className="mb-1.5 block text-xs font-medium text-white/60">Video (optional)</label>
+            {videoUrl ? (
+              <div className="flex items-center gap-2">
+                <video src={videoUrl} className="h-14 w-24 rounded-lg object-cover" muted />
+                <button onClick={() => setVideoUrl('')} className="glass-dark rounded-lg px-3 py-1.5 text-xs text-red-300">Remove</button>
+              </div>
+            ) : (
+              <label className="glass-dark flex w-fit cursor-pointer items-center gap-2 rounded-lg px-4 py-2.5 text-xs text-white/70 hover:text-white">
+                {uploadingVideo ? <Loader2 size={14} className="animate-spin" /> : <Video size={14} />}
+                Upload video
+                <input type="file" accept="video/*" className="hidden" onChange={(e) => handleVideoUpload(e.target.files?.[0] || null)} />
+              </label>
+            )}
           </div>
 
           <div>

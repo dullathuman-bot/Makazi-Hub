@@ -325,6 +325,8 @@ function SettingsTab({ settings, onSave }: { settings: SiteSettings | null; onSa
   const [saved, setSaved] = useState(false);
   const [uploadingShowcase, setUploadingShowcase] = useState(false);
   const [uploadingShowcaseVideo, setUploadingShowcaseVideo] = useState(false);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [uploadingBackground, setUploadingBackground] = useState(false);
 
   useEffect(() => {
     if (settings) {
@@ -365,6 +367,32 @@ function SettingsTab({ settings, onSave }: { settings: SiteSettings | null; onSa
     }
   };
 
+  const handleLogoUpload = async (file: File | null) => {
+    if (!file) return;
+    setUploadingLogo(true);
+    try {
+      const url = await uploadMedia(file, 'showcase');
+      setLogoUrl(url);
+    } catch (err) {
+      console.error('Logo upload error:', err);
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
+
+  const handleBackgroundUpload = async (file: File | null) => {
+    if (!file) return;
+    setUploadingBackground(true);
+    try {
+      const url = await uploadMedia(file, 'showcase');
+      setBackgroundUrl(url);
+    } catch (err) {
+      console.error('Background upload error:', err);
+    } finally {
+      setUploadingBackground(false);
+    }
+  };
+
   const handleSave = async () => {
     setSaving(true);
     try {
@@ -395,24 +423,40 @@ function SettingsTab({ settings, onSave }: { settings: SiteSettings | null; onSa
         <h3 className="mb-4 font-display text-lg font-semibold text-white">Site Content</h3>
         <div className="space-y-4">
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-white/60">Logo Image URL</label>
+            <label className="mb-1.5 block text-xs font-medium text-white/60">Logo Image</label>
             <input
               type="text"
               value={logoUrl}
               onChange={(e) => setLogoUrl(e.target.value)}
-              placeholder="https://..."
+              placeholder="https://... (or upload below)"
               className="glass w-full rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-1 focus:ring-maroon-500/50"
             />
+            <div className="mt-2 flex items-center gap-2">
+              {logoUrl && <img src={logoUrl} alt="" className="h-10 w-10 rounded-lg object-contain" />}
+              <label className="glass-dark flex w-fit cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-xs text-white/70 hover:text-white">
+                {uploadingLogo ? <Loader2 size={14} className="animate-spin" /> : <ImagePlus size={14} />}
+                Upload from device
+                <input type="file" accept="image/*" className="hidden" onChange={(e) => handleLogoUpload(e.target.files?.[0] || null)} />
+              </label>
+            </div>
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-white/60">Background Image URL</label>
+            <label className="mb-1.5 block text-xs font-medium text-white/60">Background Image</label>
             <input
               type="text"
               value={backgroundUrl}
               onChange={(e) => setBackgroundUrl(e.target.value)}
-              placeholder="https://..."
+              placeholder="https://... (or upload below)"
               className="glass w-full rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-1 focus:ring-maroon-500/50"
             />
+            <div className="mt-2 flex items-center gap-2">
+              {backgroundUrl && <img src={backgroundUrl} alt="" className="h-10 w-16 rounded-lg object-cover" />}
+              <label className="glass-dark flex w-fit cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-xs text-white/70 hover:text-white">
+                {uploadingBackground ? <Loader2 size={14} className="animate-spin" /> : <ImagePlus size={14} />}
+                Upload from device
+                <input type="file" accept="image/*" className="hidden" onChange={(e) => handleBackgroundUpload(e.target.files?.[0] || null)} />
+              </label>
+            </div>
           </div>
           <div>
             <label className="mb-1.5 block text-xs font-medium text-white/60">Hero Tagline</label>

@@ -83,7 +83,7 @@ export function AdminPanel({ onLogout }: AdminPanelProps) {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-black px-4 pb-32 pt-8">
+    <div className="relative min-h-screen overflow-hidden bg-app px-4 pb-32 pt-8">
       <div className="water-droplets" />
 
       <div className="relative z-10 mx-auto max-w-6xl">

@@ -12,7 +12,7 @@ export function AnimatedBackground({ imageUrl }: AnimatedBackgroundProps) {
   const url = imageUrl || FALLBACK_IMAGE;
 
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden bg-black">
+    <div className="fixed inset-0 -z-10 overflow-hidden bg-app">
       <div className="absolute inset-0 animate-breathe">
         <img
           src={url}

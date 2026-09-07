@@ -36,7 +36,7 @@ export function AdminLogin({ onSuccess, onBack }: AdminLoginProps) {
   };
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black px-4 pb-32 pt-8">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-app px-4 pb-32 pt-8">
       <div className="water-droplets" />
 
       <motion.div
@@ -47,7 +47,7 @@ export function AdminLogin({ onSuccess, onBack }: AdminLoginProps) {
       >
         <div className="liquid-black rounded-3xl p-8">
           <div className="mb-6 flex flex-col items-center">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-black/40 ring-1 ring-white/10">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-app/40 ring-1 ring-white/10">
               <Building2 size={32} className="text-white" />
             </div>
             <h1 className="font-display text-2xl font-bold text-white">Admin Panel</h1>

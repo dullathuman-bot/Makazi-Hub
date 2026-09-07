@@ -22,7 +22,7 @@ export function AnimatedBackground({ imageUrl }: AnimatedBackgroundProps) {
         />
       </div>
       {/* Heavy black wash so the house stays a faint, distant presence */}
-      <div className="absolute inset-0 bg-black/70" />
+      <div className="absolute inset-0 bg-app/70" />
     </div>
   );
 }

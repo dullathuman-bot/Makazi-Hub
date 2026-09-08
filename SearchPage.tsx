@@ -165,7 +165,7 @@ export function SearchPage({ properties, loading }: SearchPageProps) {
         ) : (
           <motion.div
             layout
-            className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4"
           >
             {filtered.map((property, i) => (
               <PropertyCard
@@ -209,53 +209,53 @@ function PropertyCard({ property, index, onClick }: { property: Property; index:
         }`}
       >
         {/* Image */}
-        <div className="relative aspect-[4/3] overflow-hidden rounded-t-2xl sm:aspect-video">
+        <div className="relative aspect-video overflow-hidden rounded-t-2xl">
           <img
             src={primaryImage}
             alt={property.name}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
           {/* Status badge */}
-          <div className="absolute left-3 top-3">
+          <div className="absolute left-2 top-2">
             {property.available ? (
-              <span className="glass flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-green-300 ring-1 ring-green-400/30"
+              <span className="glass flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-medium text-green-300 ring-1 ring-green-400/30"
                 style={{ boxShadow: '0 0 12px rgba(74, 222, 128, 0.2)' }}
               >
                 <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
                 Available
               </span>
             ) : (
-              <span className="glass-dark flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-white/50 ring-1 ring-white/10">
-                <XCircle size={12} />
+              <span className="glass-dark flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-medium text-white/50 ring-1 ring-white/10">
+                <XCircle size={10} />
                 Not Available
               </span>
             )}
           </div>
           {/* Price badge */}
-          <div className="absolute bottom-3 right-3">
-            <span className="glass-dark rounded-full px-3 py-1.5 text-xs font-semibold text-white">
+          <div className="absolute bottom-2 right-2">
+            <span className="glass-dark rounded-full px-2 py-1 text-[10px] font-semibold text-white">
               {formatPrice(property.price)}
             </span>
           </div>
         </div>
 
         {/* Info */}
-        <div className="p-4">
-          <h3 className="truncate font-display text-base font-semibold text-white sm:text-lg">{property.name}</h3>
-          <div className="mt-1.5 flex items-center gap-1 text-sm text-white/50">
-            <MapPin size={13} />
+        <div className="p-2.5">
+          <h3 className="truncate font-display text-xs font-semibold text-white sm:text-sm">{property.name}</h3>
+          <div className="mt-1 flex items-center gap-1 text-[10px] text-white/50">
+            <MapPin size={10} />
             <span className="truncate">{property.area}</span>
           </div>
-          <div className="mt-2 flex items-center gap-4 text-sm text-white/50">
-            <span className="flex items-center gap-1"><Bed size={14} />{property.bedrooms}</span>
-            <span className="flex items-center gap-1"><Bath size={14} />{property.bathrooms}</span>
+          <div className="mt-1 flex items-center gap-2 text-[10px] text-white/50">
+            <span className="flex items-center gap-0.5"><Bed size={10} />{property.bedrooms}</span>
+            <span className="flex items-center gap-0.5"><Bath size={10} />{property.bathrooms}</span>
             <span className="truncate">{property.property_type}</span>
           </div>
         </div>
 
         {/* View details button */}
-        <div className="px-4 pb-4">
-          <button className="sheen-sweep glass-button-accent w-full rounded-xl py-3 text-sm font-medium text-white transition-all duration-200 ease-out">
+        <div className="px-2.5 pb-2.5">
+          <button className="sheen-sweep glass-button-accent w-full rounded-xl py-2 text-[10px] font-medium text-white transition-all duration-200 ease-out sm:text-xs">
             View Details
           </button>
         </div>

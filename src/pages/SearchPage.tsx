@@ -1,6 +1,6 @@
-import { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { Search, MapPin, Bed, Bath, CheckCircle2, XCircle, SlidersHorizontal } from 'lucide-react';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, MapPin, Bed, Bath, CheckCircle2, XCircle, SlidersHorizontal, X } from 'lucide-react';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { PropertyDetailModal } from '@/components/PropertyDetailModal';
 import { useTilt } from '@/lib/useTilt';
@@ -20,6 +20,32 @@ export function SearchPage({ properties, loading }: SearchPageProps) {
   const [availableOnly, setAvailableOnly] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+
+  // Floating search — appears once the user scrolls past the main search
+  // bar, so they can search again without scrolling back to the top.
+  const [scrolled, setScrolled] = useState(false);
+  const [floatingSearchOpen, setFloatingSearchOpen] = useState(false);
+  const floatingInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        setScrolled(window.scrollY > 260);
+        ticking = false;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (floatingSearchOpen) {
+      floatingInputRef.current?.focus();
+    }
+  }, [floatingSearchOpen]);
 
   const filtered = useMemo(() => {
     return properties.filter((p) => {
@@ -178,6 +204,68 @@ export function SearchPage({ properties, loading }: SearchPageProps) {
           </motion.div>
         )}
       </div>
+
+      {/* Floating search button — shows once scrolled past the main search bar */}
+      <AnimatePresence>
+        {scrolled && !floatingSearchOpen && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.6, x: 20 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            exit={{ opacity: 0, scale: 0.6, x: 20 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+            onClick={() => setFloatingSearchOpen(true)}
+            aria-label="Open search"
+            className="liquid-black fixed right-4 top-1/2 z-40 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full"
+            style={{ boxShadow: '0 8px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2)' }}
+          >
+            <Search size={22} className="text-white" />
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+      {/* Floating search bar — opens near the top, no need to scroll back up */}
+      <AnimatePresence>
+        {floatingSearchOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setFloatingSearchOpen(false)}
+              className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, y: -30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -30, scale: 0.95 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+              className="fixed left-4 right-4 top-6 z-50 mx-auto max-w-xl"
+            >
+              <div className="liquid-black flex items-center gap-2 rounded-full px-5 py-3.5">
+                <Search size={18} className="text-white/50 shrink-0" />
+                <input
+                  ref={floatingInputRef}
+                  type="text"
+                  placeholder="Search by name or area..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') setFloatingSearchOpen(false);
+                  }}
+                  className="relative z-10 flex-1 bg-transparent text-white placeholder:text-white/40 focus:outline-none"
+                />
+                <button
+                  onClick={() => setFloatingSearchOpen(false)}
+                  aria-label="Close search"
+                  className="shrink-0 rounded-full p-1.5 text-white/60 hover:text-white"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Detail modal */}
       <PropertyDetailModal

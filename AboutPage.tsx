@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Phone, MessageCircle, MapPin, Heart, Building2, Target, Eye, ChevronDown, Sparkles, ShieldCheck } from 'lucide-react';
+import { Phone, MessageCircle, MapPin, Heart, Building2, Target, Eye, ChevronDown, Sparkles } from 'lucide-react';
 import type { SiteSettings } from '@/lib/types';
 
 interface AboutPageProps {
@@ -62,34 +62,6 @@ export function AboutPage({ settings }: AboutPageProps) {
           <li>• Simple mobile money and bank payment options built right in.</li>
           <li>• Real photos, honest prices, and a support line that actually responds.</li>
         </ul>
-      ),
-    },
-    {
-      id: 'terms',
-      icon: ShieldCheck,
-      title: 'Terms & Privacy',
-      content: (
-        <div className="space-y-3 text-sm leading-relaxed text-white/80">
-          <div>
-            <p className="mb-1 font-semibold text-white/90">Terms of Use</p>
-            <p>
-              By booking through Makazi Hub, you agree to provide accurate personal and payment
-              information. All bookings are subject to landlord confirmation. Payments made through
-              mobile money or bank transfer are processed manually and confirmed by our team — please
-              allow time for verification. Makazi Hub is not responsible for disputes arising directly
-              between tenants and landlords once a booking is confirmed.
-            </p>
-          </div>
-          <div>
-            <p className="mb-1 font-semibold text-white/90">Privacy Policy</p>
-            <p>
-              We collect your name, phone number, and payment details solely to process your booking
-              and connect you with the landlord. Your information is never sold or shared with third
-              parties outside of completing your rental request. You may contact us anytime to request
-              that your data be removed from our records.
-            </p>
-          </div>
-        </div>
       ),
     },
     {

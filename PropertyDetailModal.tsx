@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Phone, MessageCircle, CalendarDays, CheckCircle2, X, MapPin, Bed, Bath, Wifi, Car, ShieldCheck, AirVent, Trees, Dumbbell, Waves, Home, ChevronDown, Landmark, PlayCircle } from 'lucide-react';
-import emailjs from '@emailjs/browser';
 import { supabase } from '@/lib/supabase';
 import type { Property } from '@/lib/types';
 
@@ -34,13 +33,6 @@ const NETWORKS = [
   { id: 'airtel', label: 'Airtel', color: '#A6192E' },
   { id: 'halotel', label: 'Halotel', color: '#F7941D' },
 ];
-
-// EmailJS — sends a booking notification straight to the admin's inbox
-// (and phone, via the phone's own email push notification) the moment
-// a booking is submitted.
-const EMAILJS_SERVICE_ID = 'service_id68tew';
-const EMAILJS_TEMPLATE_ID = 'template_z82h3iq';
-const EMAILJS_PUBLIC_KEY = 'YZ1kSIr0GcSEgT57-';
 
 export function PropertyDetailModal({ property, onClose }: PropertyDetailModalProps) {
   const [galleryIndex, setGalleryIndex] = useState(0);
@@ -106,27 +98,6 @@ export function PropertyDetailModal({ property, onClose }: PropertyDetailModalPr
         status: 'pending',
       });
       if (error) throw error;
-
-      // Notify admin by email — failures here should never block the
-      // booking itself, so they're logged but swallowed.
-      try {
-        await emailjs.send(
-          EMAILJS_SERVICE_ID,
-          EMAILJS_TEMPLATE_ID,
-          {
-            guest_name: guestName,
-            guest_phone: guestPhone,
-            property_name: property.name,
-            amount: amount ? `${amount} TZS` : 'Not specified',
-            payment_method: paymentLabel,
-            message: noteParts.join(' | '),
-          },
-          { publicKey: EMAILJS_PUBLIC_KEY }
-        );
-      } catch (emailErr) {
-        console.error('Email notification failed:', emailErr);
-      }
-
       setSubmitted(true);
     } catch (err) {
       console.error('Booking error:', err);

@@ -560,7 +560,7 @@ function PropertyFormModal({ open, property, onClose, onSaved }: {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
-  const [area, setArea] = useState('');
+  const [area, setArea] = useState('Mikocheni');
   const [propertyType, setPropertyType] = useState('Studio');
   const [bedrooms, setBedrooms] = useState('0');
   const [bathrooms, setBathrooms] = useState('1');
@@ -589,7 +589,7 @@ function PropertyFormModal({ open, property, onClose, onSaved }: {
       setAvailable(property.available);
       setLocation(property.location || '');
     } else {
-      setName(''); setDescription(''); setPrice(''); setArea('');
+      setName(''); setDescription(''); setPrice(''); setArea('Mikocheni');
       setPropertyType('Studio'); setBedrooms('0'); setBathrooms('1');
       setAmenities(''); setImageUrls([]); setVideoUrl(''); setAvailable(true); setLocation('');
     }
@@ -680,14 +680,12 @@ function PropertyFormModal({ open, property, onClose, onSaved }: {
               <input type="number" value={price} onChange={(e) => setPrice(e.target.value)}
                 className="glass w-full rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-1 focus:ring-maroon-500/50" />
             </div>
-                        <div>
+            <div>
               <label className="mb-1 block text-xs font-medium text-white/60">Area</label>
-              <input list="area-suggestions" type="text" value={area} onChange={(e) => setArea(e.target.value)}
-                placeholder="mfano: Mikocheni, Mbezi, Tabata..."
-                className="glass w-full rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-1 focus:ring-maroon-500/50" />
-              <datalist id="area-suggestions">
-                {[...AREAS].map(a => <option key={a} value={a} />)}
-              </datalist>
+              <select value={area} onChange={(e) => setArea(e.target.value)}
+                className="glass w-full rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none">
+                {[...AREAS].map(a => <option key={a} value={a} className="bg-black">{a}</option>)}
+              </select>
             </div>
           </div>
 

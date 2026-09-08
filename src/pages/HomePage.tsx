@@ -229,8 +229,8 @@ export function HomePage({ settings, onSearch }: HomePageProps) {
                 )}
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-4">
-                  <h3 className="text-on-photo font-display text-sm font-semibold text-white">{item.title}">{item.title}</h3>
-                  <p className="mt-1 text-xs leading-relaxed text-white/70">{item.desc}</p>
+                  <h3 className="text-on-photo font-display text-sm font-semibold text-white">{item.title}</h3>
+                  <p className="text-on-photo mt-1 text-xs leading-relaxed text-white/70">{item.desc}</p>
                 </div>
               </div>
             </motion.div>

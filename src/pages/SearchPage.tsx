@@ -301,6 +301,8 @@ function PropertyCard({ property, index, onClick }: { property: Property; index:
           <img
             src={primaryImage}
             alt={property.name}
+            loading="lazy"
+            decoding="async"
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
           {/* Status badge */}

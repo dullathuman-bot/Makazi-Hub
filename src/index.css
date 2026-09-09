@@ -332,9 +332,9 @@
 }
 
 /* Mobile performance — heavy backdrop-filter blur and continuous animations
-   are expensive on phone GPUs. This block (outside any @layer, so it wins
-   the cascade automatically) lightens things up on small screens without
-   touching desktop. */
+   are expensive on phone GPUs (Android especially). This block (outside any
+   @layer, so it wins the cascade automatically) lightens things up on small
+   screens without touching desktop. */
 @media (max-width: 640px) {
   .glass,
   .glass-dark,
@@ -342,16 +342,22 @@
   .glass-button-accent,
   .glass-button-accent-soft,
   .glass-button-black,
-  .liquid-black,
   .glass-teal {
-    backdrop-filter: blur(8px) saturate(130%);
-    -webkit-backdrop-filter: blur(8px) saturate(130%);
+    backdrop-filter: blur(6px) saturate(120%);
+    -webkit-backdrop-filter: blur(6px) saturate(120%);
+  }
+  /* .liquid-black's background is already ~92% opaque black, so the blur
+     barely changes how it looks but is one of the most expensive things
+     to render on Android GPUs — drop it entirely on mobile. */
+  .liquid-black {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
   .sheen-sweep::after {
     display: none;
   }
   .animate-breathe {
-    animation-duration: 30s;
+    animation: none;
   }
 }
 
